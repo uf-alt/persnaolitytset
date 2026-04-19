@@ -79,9 +79,9 @@ const questions = [
 ];
 
 const exampleResponses = [
-  "I would try to act calm, but within minutes I would be power-walking downtown to determine whether the horses are judgmental in a helpful way or a spiritually hostile way. Then I would start assigning them names and accidentally become part of the problem.",
+  "I would immediately sit on a table just to establish that I am fine with this. Then I would spend the rest of the morning figuring out whether everyone else is adapting or panicking, and adjust my posture accordingly.",
   "I would choose the power to know exactly when a microwave will finish without looking. It is useless in every important sense, but I would become unbearable about how good I am at it.",
-  "The restaurant would be called Wet Alarm and it would serve soups, grilled cheese, and one dessert that arrives under a silver cloche with unnecessary fog. People would come because the branding implies an emergency but the emergency is snacks.",
+  "I would eat the food. I would choose someone whose general hygiene situation I trust, make that known upfront so it is not weird later, and then just move on. The alternative involves me being the villain of someone else's evening and I do not have the energy.",
   "Warning: may turn minor inconveniences into philosophy, bits, or both. Exposure can lead to secondhand confidence and sudden side quests.",
   "Object: a receipt. Snack: stale fries. Emotional breakdown: saying 'it is what it is' eight times before buying a candle. That is Earth.",
   "When my headphone wire catches on a doorknob, I instantly become a Victorian widow with a doomed inheritance and no allies.",
