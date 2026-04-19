@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ridiculous Personality Audit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero-card">
+        <p class="eyebrow">Ridiculous Personality Audit</p>
+        <h1>Answer absurd questions. Let AI judge your flavor of chaos.</h1>
+        <p class="hero-copy">
+          Version 2 drops the dating theme entirely. Instead, this quiz throws
+          ridiculous prompts at the user one question at a time, then uses
+          OpenRouter to classify them into a strange, funny, very shareable
+          personality type.
+        </p>
+        <div class="hero-note">
+          <strong>Heads up:</strong> this is still a static frontend, so the API
+          key is visible in the browser. Fine for local testing, not ideal for a
+          public deployment.
+        </div>
+      </section>
+
+      <section class="layout-grid">
+        <form id="quiz-form" class="quiz-card"></form>
+
+        <aside class="sidebar-card">
+          <div class="config-panel">
+            <h2>OpenRouter Setup</h2>
+            <label class="field-label" for="api-key">API key placeholder</label>
+            <input
+              id="api-key"
+              class="text-input"
+              type="password"
+              value="YOUR_OPENROUTER_API_KEY_HERE"
+              autocomplete="off"
+            />
+            <label class="field-label" for="model">Model</label>
+            <input
+              id="model"
+              class="text-input"
+              type="text"
+              value="openrouter/auto"
+              autocomplete="off"
+            />
+            <p class="helper-text">
+              Replace the placeholder key here or edit `DEFAULT_API_KEY` in
+              <code>app.js</code>.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button id="submit-button" class="primary-button" type="submit" form="quiz-form">
+              Diagnose My Weird Little Soul
+            </button>
+            <button id="randomize-button" class="secondary-button" type="button">
+              Load Example Chaos
+            </button>
+          </div>
+
+          <section id="result-card" class="result-card hidden" aria-live="polite">
+            <p class="result-kicker">Your AI classification</p>
+            <h2 id="result-type">Awaiting nonsense...</h2>
+            <p id="result-match" class="result-match"></p>
+            <p id="result-summary" class="result-summary"></p>
+
+            <div class="result-columns">
+              <div>
+                <h3>Core traits</h3>
+                <ul id="result-traits" class="result-list"></ul>
+              </div>
+              <div>
+                <h3>Compatible weirdos</h3>
+                <ul id="result-matches" class="result-list"></ul>
+              </div>
+            </div>
+
+            <details class="debug-panel">
+              <summary>See analysis details</summary>
+              <pre id="score-breakdown"></pre>
+            </details>
+          </section>
+
+          <section id="status-card" class="status-card">
+            Answer each question in your own words, then let the AI overinterpret
+            everything.
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
