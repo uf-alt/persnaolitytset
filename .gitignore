@@ -1,3 +1,4 @@
-read.md
 node_modules/
 packages/
+*.md
+!README.md
