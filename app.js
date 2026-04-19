@@ -1,6 +1,3 @@
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_API_KEY = "YOUR_OPENROUTER_API_KEY_HERE";
-const FALLBACK_MODEL = "openrouter/auto";
 
 const personas = {
   Goblin: {
@@ -136,18 +133,11 @@ quizForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const apiKey = document.querySelector("#api-key").value.trim() || DEFAULT_API_KEY;
-  const model = document.querySelector("#model").value.trim() || FALLBACK_MODEL;
-
   submitButton.disabled = true;
-  setStatus("Sending your ridiculous answers to OpenRouter for classification...");
+  setStatus("Sending your ridiculous answers to the AI for classification...");
 
   try {
-    const aiResult = await classifyWithOpenRouter({
-      apiKey,
-      model,
-      writtenResponses
-    });
+    const aiResult = await classifyWithOpenRouter(writtenResponses);
 
     renderResult(aiResult, aiResult.analysisNotes || "OpenRouter analyzed the written responses directly.");
     setStatus("Classification complete. Your personality has been professionally misinterpreted.");
@@ -286,78 +276,19 @@ function rankScores(scoreMap) {
   return Object.entries(scoreMap).sort((a, b) => b[1] - a[1]);
 }
 
-async function classifyWithOpenRouter({ apiKey, model, writtenResponses }) {
-  if (!apiKey || apiKey === DEFAULT_API_KEY) {
-    throw new Error("The API key is still a placeholder.");
-  }
-
-  const prompt = `
-You are classifying a user from an outrageous comedy personality quiz into one of these personas:
-- Goblin: ${personas.Goblin.vibe}
-- Wizard: ${personas.Wizard.vibe}
-- Prophet: ${personas.Prophet.vibe}
-- Mayor: ${personas.Mayor.vibe}
-- Philosopher: ${personas.Philosopher.vibe}
-- Counselor: ${personas.Counselor.vibe}
-
-The result should feel funny, specific, and shareable, not generic. Lean into absurdity, but make the reasoning believable from the user's writing style and choices.
-
-Quiz answers:
-${writtenResponses.map((selection, index) => `${index + 1}. ${selection.question}\nAnswer: ${selection.answer}`).join("\n\n")}
-
-Return valid JSON with this exact schema:
-{
-  "typeKey": "Goblin | Wizard | Prophet | Mayor | Philosopher | Counselor",
-  "typeTitle": "funny persona title",
-  "summary": "2-3 sentence funny summary of who they are",
-  "matchStyle": "1 sentence describing their social or chaotic energy",
-  "traits": ["trait 1", "trait 2", "trait 3"],
-  "bestMatches": ["funny compatible type 1", "funny compatible type 2", "funny compatible type 3"],
-  "analysisNotes": "Short paragraph explaining why the answers point to this result",
-  "signatureMotto": "One absurd quote or motto that fits them"
-}
-
-Do not include markdown fences.
-  `.trim();
-
-  const response = await fetch(OPENROUTER_API_URL, {
+async function classifyWithOpenRouter(writtenResponses) {
+  const response = await fetch("/api/classify", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": window.location.href,
-      "X-Title": "Ridiculous Personality Audit"
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "system",
-          content: "You are a precise but funny personality classifier that always returns valid JSON."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      response_format: {
-        type: "json_object"
-      }
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ writtenResponses })
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenRouter returned ${response.status}: ${errorText}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Request failed with status ${response.status}`);
   }
 
-  const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content;
-  if (!content) {
-    throw new Error("The model returned an empty response.");
-  }
-
-  return normalizeAiResult(JSON.parse(content));
+  return normalizeAiResult(await response.json());
 }
 
 function normalizeAiResult(parsed) {
