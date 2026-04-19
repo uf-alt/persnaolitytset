@@ -1,5 +1,5 @@
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+const MODEL = "google/gemma-3-27b-it:free";
 
 const personaVibes = {
   Goblin: "impulsive, mischievous, intensely committed to bad ideas with excellent confidence",
@@ -77,7 +77,6 @@ Do not include markdown fences.
           content: prompt
         }
       ],
-      response_format: { type: "json_object" }
     })
   });
 
