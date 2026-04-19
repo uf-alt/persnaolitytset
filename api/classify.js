@@ -9,13 +9,37 @@ const FALLBACK_FREE_MODELS = [
   "qwen/qwen-2.5-7b-instruct:free"
 ];
 
-const personaVibes = {
-  Goblin: "impulsive, mischievous, intensely committed to bad ideas with excellent confidence",
-  Wizard: "hyper-specific, analytical, weirdly powerful, secretly thriving in systems nobody else understands",
-  Prophet: "observant, theatrical, casually profound, capable of turning nonsense into meaning",
-  Mayor: "charismatic, loud in the useful way, socially unstoppable, built for turning disaster into a party",
-  Philosopher: "self-aware, dramatic, emotionally articulate, one step away from writing a manifesto in the Notes app",
-  Counselor: "supportive, chaotic-neutral, weirdly calming, prepared to guide a group through nonsense with a flashlight"
+const personas = {
+  Goblin: {
+    title: "Chaotic Goblin Executive",
+    vibe: "impulsive, mischievous, intensely committed to bad ideas with excellent confidence",
+    companions: ["Midnight Spreadsheet Wizard", "Mall Food Court Prophet", "Cursed Camp Counselor"]
+  },
+  Wizard: {
+    title: "Midnight Spreadsheet Wizard",
+    vibe: "hyper-specific, analytical, weirdly powerful, secretly thriving in systems nobody else understands",
+    companions: ["Chaotic Goblin Executive", "Emergency Disco Mayor", "Tiny Crisis Philosopher"]
+  },
+  Prophet: {
+    title: "Mall Food Court Prophet",
+    vibe: "observant, theatrical, casually profound, capable of turning nonsense into meaning",
+    companions: ["Tiny Crisis Philosopher", "Cursed Camp Counselor", "Emergency Disco Mayor"]
+  },
+  Mayor: {
+    title: "Emergency Disco Mayor",
+    vibe: "charismatic, loud in the useful way, socially unstoppable, built for turning disaster into a party",
+    companions: ["Chaotic Goblin Executive", "Mall Food Court Prophet", "Tiny Crisis Philosopher"]
+  },
+  Philosopher: {
+    title: "Tiny Crisis Philosopher",
+    vibe: "self-aware, dramatic, emotionally articulate, one step away from writing a manifesto in the Notes app",
+    companions: ["Midnight Spreadsheet Wizard", "Mall Food Court Prophet", "Cursed Camp Counselor"]
+  },
+  Counselor: {
+    title: "Cursed Camp Counselor",
+    vibe: "supportive, chaotic-neutral, weirdly calming, prepared to guide a group through nonsense with a flashlight",
+    companions: ["Emergency Disco Mayor", "Tiny Crisis Philosopher", "Chaotic Goblin Executive"]
+  }
 };
 
 // Free model list cache — refreshed every hour
@@ -147,8 +171,8 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "API key not configured on the server." });
   }
 
-  const personaList = Object.entries(personaVibes)
-    .map(([key, vibe]) => `- ${key}: ${vibe}`)
+  const personaList = Object.entries(personas)
+    .map(([key, p]) => `- ${key} ("${p.title}"): ${p.vibe}`)
     .join("\n");
 
   const answerList = writtenResponses
@@ -167,16 +191,22 @@ ${answerList}
 Return valid JSON with this exact schema:
 {
   "typeKey": "Goblin | Wizard | Prophet | Mayor | Philosopher | Counselor",
-  "typeTitle": "funny persona title",
   "summary": "2-3 sentence funny summary of who they are",
   "matchStyle": "1 sentence describing their social or chaotic energy",
   "traits": ["trait 1", "trait 2", "trait 3"],
-  "bestMatches": ["funny compatible type 1", "funny compatible type 2", "funny compatible type 3"],
   "analysisNotes": "Short paragraph explaining why the answers point to this result",
-  "signatureMotto": "One absurd quote or motto that fits them"
+  "signatureMotto": "One absurd quote or motto that fits them",
+  "dimensions": [
+    { "label": "Chaos Tolerance", "descriptor": "2-4 word funny descriptor", "score": 0 },
+    { "label": "Confidence", "descriptor": "2-4 word funny descriptor", "score": 0 },
+    { "label": "Social Voltage", "descriptor": "2-4 word funny descriptor", "score": 0 },
+    { "label": "Depth", "descriptor": "2-4 word funny descriptor", "score": 0 }
+  ]
 }
 
-Do not include markdown fences.
+The "dimensions" array must use exactly these four labels in this order: "Chaos Tolerance", "Confidence", "Social Voltage", "Depth". For each, write a short funny descriptor (2-4 words) and a score from 0 to 100 reflecting how strongly that trait appears in the user's answers.
+
+Do not include markdown fences. Do not add any fields beyond the schema above.
   `.trim();
 
   const messages = [
@@ -188,7 +218,18 @@ Do not include markdown fences.
 
   try {
     const content = await callWithModelFallback(apiKey, messages, referer);
-    return res.status(200).json(JSON.parse(content));
+    const parsed = JSON.parse(content);
+
+    // Validate typeKey and inject predefined title + companions — AI must not invent these
+    const typeKey = personas[parsed.typeKey] ? parsed.typeKey : "Philosopher";
+    const persona = personas[typeKey];
+
+    return res.status(200).json({
+      ...parsed,
+      typeKey,
+      typeTitle: persona.title,
+      bestMatches: persona.companions
+    });
   } catch (error) {
     console.error("[openrouter] Handler error:", error.message);
     return res.status(500).json({ error: error.message });

@@ -35,43 +35,103 @@ const personas = {
 const questions = [
   {
     prompt: "You wake up and discover that every chair in your city has been replaced with a table and likewise. What is your first move?",
-    placeholder: "Explain your response like this is an annoying but manageable Tuesday."
+    placeholder: "Explain your response like this is an annoying but manageable Tuesday.",
+    options: [
+      "Immediately sit on a table just to prove I have adapted and everyone else is slow.",
+      "Spend twenty minutes figuring out if there is a pattern before I commit to anything.",
+      "Accept it as a sign that the universe needed a reset and proceed accordingly.",
+      "Announce an emergency community meeting and somehow make this a whole event."
+    ]
   },
   {
     prompt: "A mysterious wizard offers you one superpower, with the catch that they will try their best to add one condition that sabotages you. Which one are you picking?",
-    placeholder: "There's probably no good answer to this."
+    placeholder: "There's probably no good answer to this.",
+    options: [
+      "Teleportation. Whatever cursed condition gets added, I will negotiate around it.",
+      "Perfect memory. The catch will be annoying but I will find a way to document it.",
+      "The ability to say exactly what someone needs to hear. Worth any price.",
+      "Invisibility. Even if it only works on Tuesdays I will structure my entire life around that."
+    ]
   },
   {
     prompt: "Would you rather slobber and spit into somebody's food, or eat food that somebody spat in? You can pick who spits / has their food spat on, but explain.",
-    placeholder: "Probably the freakiest question here."
+    placeholder: "Probably the freakiest question here.",
+    options: [
+      "Spit in theirs. I choose a stranger, commit to the bit, and never speak of it again.",
+      "Eat theirs. I pick someone with obviously high personal standards and move on.",
+      "Eat theirs. The person I choose would consider it a compliment.",
+      "Neither. I would rather starve than be the villain in someone else's food story."
+    ]
   },
   {
     prompt: "If your personality had a warning label printed on the side, what would it say?",
-    placeholder: "Go for funny, too honest, or both."
+    placeholder: "Go for funny, too honest, or both.",
+    options: [
+      "Warning: will escalate any minor inconvenience into a full narrative arc.",
+      "Warning: has already optimized a solution for a problem you have not described yet.",
+      "Warning: will absolutely make this your problem too and you will enjoy it.",
+      "Warning: vibes with everything, including things that should not be vibed with."
+    ]
   },
   {
     prompt: "An alien asks you to explain Earth using only one object, one snack, and one emotional breakdown. What are you choosing?",
-    placeholder: "Tell the alien exactly what kind of mess we are."
+    placeholder: "Tell the alien exactly what kind of mess we are.",
+    options: [
+      "Object: a receipt. Snack: gas station sushi. Breakdown: sending a message and immediately rereading it.",
+      "Object: a spreadsheet. Snack: sad desk lunch. Breakdown: missing something important by four minutes.",
+      "Object: a group chat. Snack: whatever was free at the event. Breakdown: the Sunday dread.",
+      "Object: a sticky note. Snack: something cursed but familiar. Breakdown: being perceived by someone who gets it."
+    ]
   },
   {
     prompt: "What tiny inconvenience turns you into a full Shakespearean tragedy character?",
-    placeholder: "Pick something petty and defend your drama."
+    placeholder: "Pick something petty and defend your drama.",
+    options: [
+      "When someone stops walking right at the entrance to somewhere.",
+      "When a page takes more than two seconds to load during something important.",
+      "When someone misuses a word confidently in front of a group.",
+      "When my headphone wire catches on a doorknob at full stride."
+    ]
   },
   {
     prompt: "You are now legally required to win a talent show using a skill you absolutely do not have. What is the plan?",
-    placeholder: "Describe how you would compensate with confidence, delusion, or props."
+    placeholder: "Describe how you would compensate with confidence, delusion, or props.",
+    options: [
+      "Enter with a fog machine and maximum staging. The spectacle carries you further than it should.",
+      "Develop the skill in the next eighteen hours through unhinged obsessive dedication.",
+      "Perform with such specific confidence that the audience starts to doubt themselves.",
+      "Tell a story about almost having the talent. Make it deeply compelling. Take the loss gracefully."
+    ]
   },
   {
     prompt: "A friend says, 'Be honest, what is your weirdest strength?' What do you tell them?",
-    placeholder: "Answer like you have already thought about this too much."
+    placeholder: "Answer like you have already thought about this too much.",
+    options: [
+      "I can make any bad plan sound like a calculated and deliberate creative risk.",
+      "I can identify the exact point where a system is failing before anyone else notices.",
+      "I can walk into any room and make the most anxious person feel immediately less anxious.",
+      "I can read the exact emotional temperature of a situation in under thirty seconds."
+    ]
   },
   {
     prompt: "If your brain had a group chat name, what would it be and who in there is causing the most problems?",
-    placeholder: "Name the internal chaos. We want lore."
+    placeholder: "Name the internal chaos. We want lore.",
+    options: [
+      "Chaos In Progress. The loudest member keeps proposing side quests at two in the morning.",
+      "Optimization Pending. The analyst has been blocking sleep approvals for three weeks.",
+      "Everything Means Something. The conspiracy theorist is currently presenting a seventeen-slide deck.",
+      "Urgent But Make It Weird. The overcommunicator is drafting a follow-up to the follow-up."
+    ]
   },
   {
     prompt: "You get to leave the user with one wildly unhelpful life motto. What is it?",
-    placeholder: "Make it memorable enough to be quoted against your will."
+    placeholder: "Make it memorable enough to be quoted against your will.",
+    options: [
+      "If it is a bad idea, at least make it a great story.",
+      "There is always a more efficient way to do this wrong.",
+      "The vibes were never really yours to control.",
+      "If nobody knows what is happening, you are technically in charge."
+    ]
   }
 ];
 
@@ -87,6 +147,45 @@ const exampleResponses = [
   "The group chat is called Urgent But Make It Weird. The biggest problem is the version of me who thinks every passing thought deserves a three-phase rollout plan.",
   "If the vibe is wrong, become more specific."
 ];
+
+const fallbackDimensions = {
+  Goblin: [
+    { label: "Chaos Tolerance", descriptor: "Enthusiastically feral", score: 94 },
+    { label: "Confidence", descriptor: "Delusionally high", score: 88 },
+    { label: "Social Voltage", descriptor: "Chaotically loud", score: 76 },
+    { label: "Depth", descriptor: "Confidently shallow", score: 31 }
+  ],
+  Wizard: [
+    { label: "Chaos Tolerance", descriptor: "Systemized chaos only", score: 44 },
+    { label: "Confidence", descriptor: "In their domain: absolute", score: 91 },
+    { label: "Social Voltage", descriptor: "Selectively intense", score: 53 },
+    { label: "Depth", descriptor: "Incomprehensibly deep", score: 97 }
+  ],
+  Prophet: [
+    { label: "Chaos Tolerance", descriptor: "Thrives in the mess", score: 72 },
+    { label: "Confidence", descriptor: "Cosmically assured", score: 85 },
+    { label: "Social Voltage", descriptor: "Theatrical but grounded", score: 79 },
+    { label: "Depth", descriptor: "Profoundly unhinged", score: 89 }
+  ],
+  Mayor: [
+    { label: "Chaos Tolerance", descriptor: "Turns it into a party", score: 81 },
+    { label: "Confidence", descriptor: "Unstoppably loud", score: 96 },
+    { label: "Social Voltage", descriptor: "Dangerously charming", score: 98 },
+    { label: "Depth", descriptor: "Wide but fast", score: 58 }
+  ],
+  Philosopher: [
+    { label: "Chaos Tolerance", descriptor: "Internally managed", score: 62 },
+    { label: "Confidence", descriptor: "Dramatically uncertain", score: 67 },
+    { label: "Social Voltage", descriptor: "Intense one-on-one", score: 61 },
+    { label: "Depth", descriptor: "Manifesto-level deep", score: 95 }
+  ],
+  Counselor: [
+    { label: "Chaos Tolerance", descriptor: "Calm in the storm", score: 77 },
+    { label: "Confidence", descriptor: "Quietly unshakeable", score: 83 },
+    { label: "Social Voltage", descriptor: "Warm and steady", score: 86 },
+    { label: "Depth", descriptor: "Deep but accessible", score: 88 }
+  ]
+};
 
 const fallbackSignals = {
   Goblin: ["chaos", "chaotic", "problem", "mischief", "bad idea", "impulsive", "goblin", "feral", "side quest", "unhinged"],
@@ -156,6 +255,13 @@ function renderQuestion() {
   const isFirst = state.currentQuestionIndex === 0;
   const isLast = state.currentQuestionIndex === questions.length - 1;
 
+  const optionsHtml = question.options
+    .map((option, i) => {
+      const selected = answer === option ? "is-selected" : "";
+      return `<button class="option-button ${selected}" type="button" data-option="${i}">${escapeHtml(option)}</button>`;
+    })
+    .join("");
+
   quizForm.innerHTML = `
     <section class="question-card solo-card">
       <div class="quiz-progress-row">
@@ -169,10 +275,11 @@ function renderQuestion() {
         <span class="progress-fill" style="width: ${((state.currentQuestionIndex + 1) / questions.length) * 100}%"></span>
       </div>
       <p class="question-text">${question.prompt}</p>
-      <p class="question-hint">${question.placeholder}</p>
+      <div class="option-list">${optionsHtml}</div>
+      <p class="option-divider">or write your own</p>
       <textarea
         id="response-input"
-        class="response-input"
+        class="response-input response-input--compact"
         name="response-input"
         placeholder="${question.placeholder}"
       >${escapeHtml(answer)}</textarea>
@@ -197,10 +304,25 @@ function renderQuestion() {
   `;
 
   const responseInput = document.querySelector("#response-input");
-  responseInput.focus();
+
   responseInput.addEventListener("input", (event) => {
     state.answers[state.currentQuestionIndex] = event.target.value;
+    // Keep option highlighted only if text still exactly matches it
+    document.querySelectorAll("[data-option]").forEach((btn, i) => {
+      btn.classList.toggle("is-selected", question.options[i] === event.target.value);
+    });
     updateNavigationDots();
+  });
+
+  document.querySelectorAll("[data-option]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const text = question.options[Number(btn.dataset.option)];
+      state.answers[state.currentQuestionIndex] = text;
+      responseInput.value = text;
+      document.querySelectorAll("[data-option]").forEach((b) => b.classList.remove("is-selected"));
+      btn.classList.add("is-selected");
+      updateNavigationDots();
+    });
   });
 
   document.querySelector("#previous-button")?.addEventListener("click", () => {
@@ -295,6 +417,13 @@ function normalizeAiResult(parsed) {
   const safeTypeKey = personas[parsed.typeKey] ? parsed.typeKey : "Philosopher";
   const fallback = personas[safeTypeKey];
 
+  const validDimensions =
+    Array.isArray(parsed.dimensions) &&
+    parsed.dimensions.length === 4 &&
+    parsed.dimensions.every(
+      (d) => d.label && typeof d.descriptor === "string" && typeof d.score === "number"
+    );
+
   return {
     typeKey: safeTypeKey,
     typeTitle: parsed.typeTitle || fallback.title,
@@ -303,7 +432,8 @@ function normalizeAiResult(parsed) {
     traits: Array.isArray(parsed.traits) && parsed.traits.length ? parsed.traits.slice(0, 4) : fallback.vibe.split(", "),
     bestMatches: Array.isArray(parsed.bestMatches) && parsed.bestMatches.length ? parsed.bestMatches.slice(0, 4) : fallback.companions,
     analysisNotes: parsed.analysisNotes || `The AI mapped your answers to ${fallback.title} based on your tone, humor, and decision-making style.`,
-    signatureMotto: parsed.signatureMotto || "Commit to the bit and let history sort it out."
+    signatureMotto: parsed.signatureMotto || "Commit to the bit and let history sort it out.",
+    dimensions: validDimensions ? parsed.dimensions : fallbackDimensions[safeTypeKey]
   };
 }
 
@@ -333,7 +463,8 @@ function buildFallbackResult(writtenResponses) {
     traits: persona.vibe.split(", ").map((trait) => trait.trim()),
     bestMatches: persona.companions,
     analysisNotes: buildAnalysisNotes(scoreMap),
-    signatureMotto: buildFallbackMotto(topType)
+    signatureMotto: buildFallbackMotto(topType),
+    dimensions: fallbackDimensions[topType]
   };
 }
 
@@ -362,6 +493,35 @@ function renderResult(result, analysisNotes) {
   resultType.textContent = result.typeTitle;
   resultMatch.textContent = result.matchStyle;
   resultSummary.textContent = `${result.summary} Signature motto: "${result.signatureMotto}"`;
+
+  const dimensionsEl = document.querySelector("#result-dimensions");
+  dimensionsEl.innerHTML = result.dimensions
+    .map(
+      (d) => `
+      <div class="dimension-row">
+        <div class="dimension-meta">
+          <span class="dimension-label">${d.label}</span>
+          <span class="dimension-right">
+            <span class="dimension-descriptor">${d.descriptor}</span>
+            <span class="dimension-score">${d.score}%</span>
+          </span>
+        </div>
+        <div class="dimension-track">
+          <div class="dimension-fill" data-width="${d.score}%"></div>
+        </div>
+      </div>`
+    )
+    .join("");
+
+  // Animate bars in after paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      dimensionsEl.querySelectorAll(".dimension-fill").forEach((bar) => {
+        bar.style.width = bar.dataset.width;
+      });
+    });
+  });
+
   resultTraits.innerHTML = result.traits.map((trait) => `<li>${trait}</li>`).join("");
   resultMatches.innerHTML = result.bestMatches.map((match) => `<li>${match}</li>`).join("");
   scoreBreakdown.textContent = analysisNotes;
