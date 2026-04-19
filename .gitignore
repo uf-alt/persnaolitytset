@@ -4,3 +4,5 @@ packages/
 !README.md
 .claude/
 .playwright-mcp/
+.env
+.env.example
